@@ -26,11 +26,11 @@ body {
      </div>
  
     <%
-       if( request.getAttribute("departamentos")!=null){
-          List<Departamento> departamentos  = (List<Departamento>)request.getAttribute("departamentos");
-           for (Departamento departamento : departamentos) {
+       if( request.getAttribute("Studentss")!=null){
+          List<Students> Studentss  = (List<Students>)request.getAttribute("Studentss");
+           for (Students Students : Studentss) {
          %>      
-         <h1> <%=departamento.getNom_departamento()%> </h1><br/> 
+         <h1> <%=Students.getNom_Students()%> </h1><br/> 
          <%      
           }
        }

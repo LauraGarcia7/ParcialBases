@@ -1,5 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package edu.co.sergio.mundo.dao;
 
+import edu.co.sergio.mundo.vo.Results;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,68 +14,57 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import edu.co.sergio.mundo.vo.Students;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Isabel-Fabian
- * @since 12/08/2015
- * @version 2
- * Clase que permite la gestion de la tabla Depto en la base de datos.
- * 
- * CREATE TABLE Depto(
- *     id_depto integer,
- *     nom_depto varchar(40),
- *     PRIMARY KEY(id_depto)
- * );
+ *
+ * @author Labing
  */
- 
-
-public class DepartamentoDAO implements IBaseDatos<Students> {
-
-	/**
-	 * Funcion que permite obtener una lista de los Studentss existentes en la base de datos
-	 * @return List<Students> Retorna la lista de Studentss existentes en la base de datos
-	 */
-	public List<Students> findAll() {
-		List<Students> Studentss= null;
-	    String query = "SELECT * FROM Depto";
+public class ResultsDAO {
+       public List<Results> findAll() {
+		List<Results> Resultss= null;
+	    String query = "SELECT * FROM Results";
 	    Connection connection = null;
             try {
                 connection = Conexion.getConnection();
             } catch (URISyntaxException ex) {
-                Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ResultsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
 	    try {
 	    Statement st = connection.createStatement();
 	    ResultSet rs = st.executeQuery(query);
-	    int id =0;
-	    String nombre = null;
+	    int SID =0,ENO=0,Points=0;
+	    String CAT = null;
 	
 	    while (rs.next()){
-	    	if(Studentss == null){
-	    		Studentss= new ArrayList<Students>();
+	    	if(Resultss == null){
+	    		Resultss= new ArrayList<Results>();
 	    	}
 	      
-	        Students registro= new Students();
-	        id = rs.getInt("id_depto");
-	        registro.setId_Students(id);
+	        Results registro= new Results();
+	        SID = rs.getInt("SID");
+	        registro.setSID(SID);
 	        
-	        nombre = rs.getString("nom_depto");
-	        registro.setNom_Students(nombre) ;
+	        CAT = rs.getString("CAT");
+	        registro.setCAT(CAT) ;
+                
+                ENO = rs.getInt("ENO");
+	        registro.setENO(ENO);
+                
+                Points = rs.getInt("Points");
+	        registro.setPoints(Points);
 	        
-	        Studentss.add(registro);
+	        Resultss.add(registro);
 	    }
 	    st.close();
 	    
 	    } catch (SQLException e) {
-			System.out.println("Problemas al obtener la lista de Studentss");
+			System.out.println("Problemas al obtener la lista de Results");
 			e.printStackTrace();
 		}
 	    
-	    return Studentss;
+	    return Resultss;
 	}
 
 	
@@ -77,20 +73,22 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	 * @param Students recibe un objeto de tipo Students 
 	 * @return boolean retorna true si la operacion de insercion es exitosa.
 	 */
-	public boolean insert(Students t) {
+	public boolean insert(Results t) {
 		boolean result=false;
 		Connection connection=null;
             try {
                 connection = Conexion.getConnection();
             } catch (URISyntaxException ex) {
-                Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ResultsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-	    String query = " insert into Depto (id_depto,nom_depto)"  + " values (?,?)";
+	    String query = " insert into Results (SID,CAT,ENO,Points)"  + " values (?,?,?,?)";
         PreparedStatement preparedStmt=null;
 	    try {
 			preparedStmt = connection.prepareStatement(query);
-			preparedStmt.setInt (1, t.getId_Students());
-                        preparedStmt.setString (2, t.getNom_Students());
+			preparedStmt.setInt (1, t.getSID());
+                        preparedStmt.setString (2, t.getCAT());
+                        preparedStmt.setInt (3, t.getENO());
+                        preparedStmt.setInt (4, t.getPoints());
 			result= preparedStmt.execute();
 	    } catch (SQLException e) {
 			e.printStackTrace();
@@ -103,20 +101,22 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	 * @param Students recibe un objeto de tipo Students 
 	 * @return boolean retorna true si la operacion de actualizacion es exitosa.
 	 */
-	public boolean update(Students t) {
+	public boolean update(Results t) {
 		boolean result=false;
 		Connection connection= null;
             try {
                 connection = Conexion.getConnection();
             } catch (URISyntaxException ex) {
-                Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ResultsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-		String query = "update Depto set nom_depto = ? where id_depto = ?";
+		String query = "update Results set CAT = ?, ENO = ?, Points = ? where SID = ?";
 		PreparedStatement preparedStmt=null;
 		try {
 		    preparedStmt = connection.prepareStatement(query);
-		    preparedStmt.setString(1, t.getNom_Students());
-                    preparedStmt.setInt   (2, t.getId_Students());
+		    preparedStmt.setString(1, t.getCAT());
+                    preparedStmt.setInt(2, t.getENO());
+                    preparedStmt.setInt(3, t.getPoints());
+                    preparedStmt.setInt (4, t.getSID());
 		    if (preparedStmt.executeUpdate() > 0){
 		    	result=true;
 		    }
@@ -133,19 +133,19 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	 * @param Students recibe un objeto de tipo Students 
 	 * @return boolean retorna true si la operacion de borrado es exitosa.
 	 */
-	public boolean delete(Students t) {
+	public boolean delete(Results t) {
 	   boolean result=false;
 	   Connection connection = null;
             try {
                 connection = Conexion.getConnection();
             } catch (URISyntaxException ex) {
-                Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ResultsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-	   String query = "delete from Depto where id_depto = ?";
+	   String query = "delete from Results where SID = ?";
 	   PreparedStatement preparedStmt=null;
 	   try {
 		     preparedStmt = connection.prepareStatement(query);
-		     preparedStmt.setInt(1, t.getId_Students());
+		     preparedStmt.setInt(1, t.getSID());
 		    result= preparedStmt.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

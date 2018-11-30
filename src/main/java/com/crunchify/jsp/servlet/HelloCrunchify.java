@@ -1,7 +1,7 @@
 package com.crunchify.jsp.servlet;
  
-import edu.co.sergio.mundo.dao.DepartamentoDAO;
-import edu.co.sergio.mundo.vo.Departamento;
+import edu.co.sergio.mundo.dao.StudentsDAO;
+import edu.co.sergio.mundo.vo.Students;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,16 +21,16 @@ public class HelloCrunchify extends HttpServlet {
         String nombre = request.getParameter("nombre");
         
         //Se debe incluir validaciones - Lo recuerda: Gestion de Excepciones.
-        DepartamentoDAO dao = new DepartamentoDAO();
+        StudentsDAO dao = new StudentsDAO();
         
-        Departamento departamento = new Departamento();
-        departamento.setId_departamento(Integer.parseInt(id));
-        departamento.setNom_departamento(nombre);
-        dao.insert(departamento);
+        Students Students = new Students();
+        Students.setId_Students(Integer.parseInt(id));
+        Students.setNom_Students(nombre);
+        dao.insert(Students);
         
         //Listando la informacion  
-        List<Departamento> departamentos =  dao.findAll();
-        request.setAttribute("departamentos", departamentos);
+        List<Students> Studentss =  dao.findAll();
+        request.setAttribute("Studentss", Studentss);
        
        
         //Redireccionando la informacion

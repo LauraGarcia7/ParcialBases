@@ -1,5 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package edu.co.sergio.mundo.dao;
 
+import edu.co.sergio.mundo.vo.Students;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,34 +14,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import edu.co.sergio.mundo.vo.Students;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Isabel-Fabian
- * @since 12/08/2015
- * @version 2
- * Clase que permite la gestion de la tabla Depto en la base de datos.
- * 
- * CREATE TABLE Depto(
- *     id_depto integer,
- *     nom_depto varchar(40),
- *     PRIMARY KEY(id_depto)
- * );
+ *
+ * @author Labing
  */
- 
-
-public class DepartamentoDAO implements IBaseDatos<Students> {
-
-	/**
-	 * Funcion que permite obtener una lista de los Studentss existentes en la base de datos
-	 * @return List<Students> Retorna la lista de Studentss existentes en la base de datos
-	 */
-	public List<Students> findAll() {
+public class StudentsDAO {
+    public List<Students> findAll() {
 		List<Students> Studentss= null;
-	    String query = "SELECT * FROM Depto";
+	    String query = "SELECT * FROM Students";
 	    Connection connection = null;
             try {
                 connection = Conexion.getConnection();
@@ -45,7 +35,7 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	    Statement st = connection.createStatement();
 	    ResultSet rs = st.executeQuery(query);
 	    int id =0;
-	    String nombre = null;
+	    String nombre = null, apellido=null, email=null;
 	
 	    while (rs.next()){
 	    	if(Studentss == null){
@@ -53,18 +43,24 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	    	}
 	      
 	        Students registro= new Students();
-	        id = rs.getInt("id_depto");
-	        registro.setId_Students(id);
+	        id = rs.getInt("SID");
+	        registro.setSID(id);
 	        
-	        nombre = rs.getString("nom_depto");
-	        registro.setNom_Students(nombre) ;
+	        nombre = rs.getString("First");
+	        registro.setFirst(nombre) ;
+                
+                apellido = rs.getString("Last");
+	        registro.setLast(apellido) ;
+                
+                email = rs.getString("Email");
+	        registro.setLast(email) ;
 	        
 	        Studentss.add(registro);
 	    }
 	    st.close();
 	    
 	    } catch (SQLException e) {
-			System.out.println("Problemas al obtener la lista de Studentss");
+			System.out.println("Problemas al obtener la lista de Students");
 			e.printStackTrace();
 		}
 	    
@@ -85,12 +81,14 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
             } catch (URISyntaxException ex) {
                 Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-	    String query = " insert into Depto (id_depto,nom_depto)"  + " values (?,?)";
+	    String query = " insert into Students (SID,First,Last,Email)"  + " values (?,?,?,?)";
         PreparedStatement preparedStmt=null;
 	    try {
 			preparedStmt = connection.prepareStatement(query);
-			preparedStmt.setInt (1, t.getId_Students());
-                        preparedStmt.setString (2, t.getNom_Students());
+			preparedStmt.setInt (1, t.getSID());
+                        preparedStmt.setString (2, t.getFirst());
+                        preparedStmt.setString (3, t.getLast());
+                        preparedStmt.setString (4, t.getEmail());
 			result= preparedStmt.execute();
 	    } catch (SQLException e) {
 			e.printStackTrace();
@@ -111,12 +109,14 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
             } catch (URISyntaxException ex) {
                 Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-		String query = "update Depto set nom_depto = ? where id_depto = ?";
+		String query = "update Students set Fisrt = ?, Last = ?, Email = ? where SID = ?";
 		PreparedStatement preparedStmt=null;
 		try {
 		    preparedStmt = connection.prepareStatement(query);
-		    preparedStmt.setString(1, t.getNom_Students());
-                    preparedStmt.setInt   (2, t.getId_Students());
+		    preparedStmt.setString(1, t.getFirst());
+                    preparedStmt.setString(2, t.getLast());
+                    preparedStmt.setString(3, t.getEmail());
+                    preparedStmt.setInt   (4, t.getSID());
 		    if (preparedStmt.executeUpdate() > 0){
 		    	result=true;
 		    }
@@ -141,11 +141,11 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
             } catch (URISyntaxException ex) {
                 Logger.getLogger(StudentsDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-	   String query = "delete from Depto where id_depto = ?";
+	   String query = "delete from Students where SID = ?";
 	   PreparedStatement preparedStmt=null;
 	   try {
 		     preparedStmt = connection.prepareStatement(query);
-		     preparedStmt.setInt(1, t.getId_Students());
+		     preparedStmt.setInt(1, t.getSID());
 		    result= preparedStmt.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -153,4 +153,5 @@ public class DepartamentoDAO implements IBaseDatos<Students> {
 	   
 	   return result;
 	}
+    
 }
